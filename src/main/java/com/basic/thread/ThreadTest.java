@@ -1,6 +1,9 @@
 package com.basic.thread;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -9,19 +12,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @create: 2020-10-29 16:03
  **/
 
-/*
-*
-*
-*
-* */
 public class ThreadTest {
-    public static void main(String []args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        executorService.execute(new MyRunable());
+        Future<String> submit = executorService.submit(new MyCallable());
+
+        Future<String> submit1 = executorService.submit(new MyCallable());
+
+
         CountDownLatch countDownLatch = new CountDownLatch(4);
-        for(int i=0;i<5;i++){
-            final Thread t = new Thread(){
+        for (int i = 0; i < 5; i++) {
+            final Thread t = new Thread() {
                 @Override
-                public void run(){
-                    System.out.println("当前线程:"+ Thread.currentThread().getName()+",已分配ID:"+ThreadId.get());
+                public void run() {
+                    System.out.println("当前线程:" + Thread.currentThread().getName() + ",已分配ID:" + ThreadId.get());
                 }
             };
             t.start();
@@ -30,7 +36,8 @@ public class ThreadTest {
 
         countDownLatch.wait();
     }
-    static class ThreadId{
+
+    static class ThreadId {
         //一个递增的序列，使用AtomicInger原子变量保证线程安全
         private static final AtomicInteger nextId = new AtomicInteger(0);
         //线程本地变量，为每个线程关联一个唯一的序号
