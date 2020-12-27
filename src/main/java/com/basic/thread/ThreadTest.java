@@ -1,5 +1,6 @@
 package com.basic.thread;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -14,7 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 *
 * */
 public class ThreadTest {
-    public static void main(String []args){
+    public static void main(String []args) throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(4);
         for(int i=0;i<5;i++){
             final Thread t = new Thread(){
                 @Override
@@ -23,7 +25,10 @@ public class ThreadTest {
                 }
             };
             t.start();
+            countDownLatch.countDown();
         }
+
+        countDownLatch.wait();
     }
     static class ThreadId{
         //一个递增的序列，使用AtomicInger原子变量保证线程安全
